@@ -1,5 +1,5 @@
-import copy
 import random
+
 import numpy as np
 
 
@@ -14,20 +14,20 @@ class DifferentialEvolution:
         self.f = f
         self.iterations = iterations
         self.population = self.generate_population()
-        self.v = self.find_the_best()
+        self.best_solution = self.find_the_best()
 
     def optimize(self):
-        best_solution = self.v
-        best_fitness = self.func(best_solution)
+        best_solutions = []
         for iterator in range(self.iterations):
             for x in range(0, self.population_size):
-                d, e = self.sample(2)
+                d, e = self.sample(2, x)
                 M = self.mutation(d, e)
                 K = self.crossover(M)
-                if self.func(K) <= best_fitness:
-                    best_solution = K
-                    best_fitness = self.func(K)
-        return best_solution
+                if self.func(K) < self.func(self.best_solution):
+                    self.best_solution = K
+            best_solutions.append(self.best_solution)
+        ind = np.argmin(best_solutions)
+        return best_solutions[ind]
 
     def generate_population(self):
         population = []
@@ -39,22 +39,29 @@ class DifferentialEvolution:
         return population
 
     def find_the_best(self):
-        best = self.population[0]
-        for i in range(len(self.population) - 1):
-            if self.func(self.population[i]) >= self.func(self.population[i + 1]):
-                best = self.population[i + 1]
-        return best
+        best_solution = self.population[0]
+        best_fitness = self.func(best_solution)
+        for i in self.population:
+            fitness = self.func(i)
+            if fitness < best_fitness:
+                best_solution = i
+                best_fitness = fitness
+        return best_solution
 
-    def sample(self, number):
-        return random.sample(self.population, number)
+    def sample(self, number, exclude_ind):
+        population_ind = list(range(self.population_size))
+        population_ind.remove(exclude_ind)
+        selected_ind = random.sample(population_ind, number)
+        return [self.population[i] for i in selected_ind]
 
     def crossover(self, m):
-        new = copy.deepcopy(self.v)
-        for i in range(len(self.v)):
+        new = self.best_solution.copy()
+        for i in range(len(self.best_solution)):
             if random.uniform(0, 1) < self.cr:
                 new[i] = m[i]
         return new
 
     def mutation(self, d, e):
-        new = [self.v[i] + self.f * (d[i] - e[i]) for i in range(self.vector_size)]
+        new = [self.best_solution[i] + self.f * (d[i] - e[i]) for i in range(self.vector_size)]
+        new = [min(max(val, self.a), self.b) for val in new]
         return new
