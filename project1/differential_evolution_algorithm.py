@@ -4,7 +4,7 @@ import numpy as np
 
 
 class DifferentialEvolution:
-    def __init__(self, func, population_size, iterations, vector_size, a, b, cr=0.5, f=0.5):
+    def __init__(self, func, population_size, iterations, vector_size, a, b, cr=0.7, f=0.5):
         self.func = func
         self.population_size = population_size
         self.vector_size = vector_size
@@ -20,14 +20,17 @@ class DifferentialEvolution:
         best_solutions = []
         for iterator in range(self.iterations):
             for x in range(0, self.population_size):
+                v = self.population[x]
                 d, e = self.sample(2, x)
                 M = self.mutation(d, e)
-                K = self.crossover(M)
+                K = self.crossover(M, v)
+                if self.func(K) < self.func(v):
+                    self.population[x] = K
                 if self.func(K) < self.func(self.best_solution):
                     self.best_solution = K
             best_solutions.append(self.best_solution)
         ind = np.argmin(best_solutions)
-        return best_solutions[ind]
+        return best_solutions
 
     def generate_population(self):
         population = []
@@ -54,9 +57,9 @@ class DifferentialEvolution:
         selected_ind = random.sample(population_ind, number)
         return [self.population[i] for i in selected_ind]
 
-    def crossover(self, m):
-        new = self.best_solution.copy()
-        for i in range(len(self.best_solution)):
+    def crossover(self, m, v):
+        new = v.copy()
+        for i in range(len(v)):
             if random.uniform(0, 1) < self.cr:
                 new[i] = m[i]
         return new
