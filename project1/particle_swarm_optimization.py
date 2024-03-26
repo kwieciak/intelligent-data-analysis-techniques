@@ -14,7 +14,17 @@ class Pso:
         self.iterations = iterations
         self.population = self.generate_population(particles_num)
         self.best_adaptation = float('inf')
-        self.best_particle = self.population[0]
+        self.best_particle = None
+        self.best_values_over_time = []
+
+    def optimize(self):
+        for i in range(self.iterations):
+            self.update_adaptation()
+            for particle in self.population:
+                particle.update_velocity(self.best_particle)
+                particle.update_position()
+            self.best_values_over_time.append(self.best_adaptation)
+        return self.best_adaptation, self.best_particle
 
     def generate_population(self, particles_num):
         particles = []
