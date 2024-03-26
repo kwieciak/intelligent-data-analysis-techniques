@@ -37,3 +37,4 @@ class Particle:
     def update_position(self):
         for i in range(len(self.vector)):
             self.vector[i] += self.velocity[i]
+            self.vector[i] = min(max(self.vector[i], self.a), self.b)

@@ -1,9 +1,10 @@
+import random
 import particle
 
 
 class Pso:
     def __init__(self, particles_num, a, b, func, inertia, cognitive_constant, social_constant, vector_size,
-                 iterations):
+                 iterations, cr=0.7, f=0.5):
         self.a = a
         self.b = b
         self.func = func
@@ -16,13 +17,23 @@ class Pso:
         self.best_adaptation = float('inf')
         self.best_particle = None
         self.best_values_over_time = []
+        self.cr = cr
+        self.f = f
 
     def optimize(self):
         for i in range(self.iterations):
             self.update_adaptation()
-            for particle in self.population:
-                particle.update_velocity(self.best_particle)
-                particle.update_position()
+            for j in range(len(self.population)):
+                self.population[j].update_velocity(self.best_particle)
+                self.population[j].update_position()
+                d, e = self.sample(2, j)
+                M = self.mutation(d.vector, e.vector)
+                K = self.crossover(M, self.population[j].vector)
+                if self.func(K) < self.func(self.population[j].vector):
+                    self.population[j].vector = K
+                if self.func(K) < self.best_adaptation:
+                    self.best_adaptation = self.func(K)
+                    self.best_particle = self.population[j]
             self.best_values_over_time.append(self.best_adaptation)
         return self.best_adaptation, self.best_particle
 
@@ -47,7 +58,20 @@ class Pso:
                 self.best_adaptation = adaptation
                 self.best_particle = particle
 
+    def sample(self, number, exclude_ind):
+        population_ind = list(range(len(self.population)))
+        population_ind.remove(exclude_ind)
+        selected_ind = random.sample(population_ind, number)
+        return [self.population[i] for i in selected_ind]
 
+    def crossover(self, m, v):
+        new = v.copy()
+        for i in range(len(v)):
+            if random.uniform(0, 1) < self.cr:
+                new[i] = m[i]
+        return new
 
-
-
+    def mutation(self, d, e):
+        new = [self.best_particle.best_adaptation + self.f * (d.vector[i] - e.vector[i]) for i in range(self.vector_size)]
+        new = [min(max(val, self.a), self.b) for val in new]
+        return new
