@@ -1,8 +1,10 @@
+import copy
 import random
+
 import particle
 
 
-class Pso:
+class PsoDE:
     def __init__(self, particles_num, a, b, func, inertia, cognitive_constant, social_constant, vector_size,
                  iterations, cr=0.7, f=0.5):
         self.a = a
@@ -35,7 +37,7 @@ class Pso:
                     self.best_adaptation = self.func(K)
                     self.best_particle = self.population[j]
             self.best_values_over_time.append(self.best_adaptation)
-        return self.best_adaptation, self.best_particle
+        return self.best_adaptation, self.best_particle.vector, self.best_values_over_time
 
     def generate_population(self, particles_num):
         particles = []
@@ -45,18 +47,18 @@ class Pso:
             particles.append(new_particle)
         return particles
 
-    def calculate_adaptation(self, particle):
-        return self.func(particle.vector)
+    def calculate_adaptation(self, particlee):
+        return self.func(particlee.vector)
 
     def update_adaptation(self):
-        for particle in self.population:
-            adaptation = self.calculate_adaptation(particle)
-            if adaptation < particle.best_adaptation:
-                particle.best_adaptation = adaptation
-                particle.best_vector = particle.vector
-            if adaptation < self.best_adaptation:
+        for particlee in self.population:
+            adaptation = self.calculate_adaptation(particlee)
+            if adaptation < particlee.best_adaptation:  # local
+                particlee.best_adaptation = adaptation
+                particlee.best_vector = copy.deepcopy(particlee.vector)
+            if adaptation < self.best_adaptation:  # global
                 self.best_adaptation = adaptation
-                self.best_particle = particle
+                self.best_particle = copy.deepcopy(particlee)
 
     def sample(self, number, exclude_ind):
         population_ind = list(range(len(self.population)))
@@ -72,6 +74,6 @@ class Pso:
         return new
 
     def mutation(self, d, e):
-        new = [self.best_particle.best_adaptation + self.f * (d.vector[i] - e.vector[i]) for i in range(self.vector_size)]
+        new = [self.best_particle.best_adaptation + self.f * (d[i] - e[i]) for i in range(self.vector_size)]
         new = [min(max(val, self.a), self.b) for val in new]
         return new

@@ -1,30 +1,20 @@
 import random
+import copy
+import numpy as np
 
 
 class Particle:
     def __init__(self, vector_size, inertia, cognitive_constant, social_constant, a, b):
         self.vector_size = vector_size
         self.best_adaptation = float('inf')
-        self.velocity = self.generate_velocity()
         self.inertia = inertia
         self.cognitive_constant = cognitive_constant
         self.social_constant = social_constant
         self.a = a
         self.b = b
-        self.vector = self.generate_vector()
-        self.best_vector = self.vector
-
-    def generate_vector(self):
-        vector = []
-        for i in range(self.vector_size):
-            vector.append(random.uniform(self.a, self.b))
-        return vector
-
-    def generate_velocity(self):
-        velocity = []
-        for i in range(self.vector_size):
-            velocity.append(random.uniform(self.a, self.b))
-        return velocity
+        self.vector = [random.uniform(self.a, self.b) for _ in range(self.vector_size)]
+        self.best_vector = copy.deepcopy(self.vector)
+        self.velocity = np.zeros(vector_size)
 
     def update_velocity(self, best_particle):
         for i in range(len(self.vector)):
