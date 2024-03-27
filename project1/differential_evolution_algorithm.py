@@ -18,6 +18,7 @@ class DifferentialEvolution:
 
     def optimize(self):
         best_solutions = []
+        best_fitness = []
         for iterator in range(self.iterations):
             for x in range(0, self.population_size):
                 v = self.population[x]
@@ -29,8 +30,9 @@ class DifferentialEvolution:
                 if self.func(K) < self.func(self.best_solution):
                     self.best_solution = K
             best_solutions.append(self.best_solution)
+            best_fitness.append(self.func(self.best_solution))
         ind = np.argmin(best_solutions)
-        return best_solutions
+        return best_fitness
 
     def generate_population(self):
         population = []

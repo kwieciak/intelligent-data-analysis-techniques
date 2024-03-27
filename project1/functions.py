@@ -1,7 +1,7 @@
 import numpy as np
 
 
-# rosenbrock_bounds = [-2.048, 2.048]
+# f2_bounds = [-100, 100]
 # rastrigin_bounds = [-5.12, 5.12]
 # sphere_bounds = [-100, 100]
 # griewank_bounds = [-600, 600]
@@ -18,8 +18,11 @@ def rastrigin_function(x):
     return sum_values
 
 
-def rosenbrock_function(x):
-    return np.sum(100.0 * (x[1:] - x[:-1] ** 2) ** 2 + (1 - x[:-1]) ** 2)
+def f2_function(x):
+    sum_values = 0
+    for i in range(len(x)):
+        sum_values += ((x[i] - i) ** 2)
+    return sum_values
 
 
 def griewank_function(x):

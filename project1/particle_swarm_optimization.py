@@ -37,7 +37,7 @@ class PsoDE:
                     self.best_adaptation = self.func(K)
                     self.best_particle = self.population[j]
             self.best_values_over_time.append(self.best_adaptation)
-        return self.best_adaptation, self.best_particle.vector, self.best_values_over_time
+        return self.best_adaptation, self.best_values_over_time
 
     def generate_population(self, particles_num):
         particles = []
