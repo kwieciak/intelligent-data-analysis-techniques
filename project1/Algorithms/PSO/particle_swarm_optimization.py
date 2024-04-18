@@ -1,7 +1,7 @@
 import copy
 import random
 
-import particle
+from project1.Algorithms.PSO import particle
 
 
 class PsoDE:

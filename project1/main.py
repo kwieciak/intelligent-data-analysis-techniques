@@ -1,8 +1,8 @@
-from matplotlib import pyplot, pyplot as plt
+from matplotlib import pyplot as plt
 from time import time
-import differential_evolution_algorithm
+from project1.Algorithms.DE import differential_evolution_algorithm
 import functions
-import particle_swarm_optimization
+from project1.Algorithms.PSO import particle_swarm_optimization
 
 # f2_bounds = [-100, 100]
 # rastrigin_bounds = [-5.12, 5.12]
