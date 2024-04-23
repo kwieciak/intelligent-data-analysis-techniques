@@ -6,6 +6,13 @@ import numpy as np
 from project1.Algorithms.BAT import bat
 
 
+def calculate_mean_pulse_rate(population):
+    pulse_rate = 0
+    for bat in population:
+        pulse_rate += bat.pulse_rate
+    return pulse_rate / len(population)
+
+
 class BatAlgorithm:
     def __init__(self, pop_size, vector_size, a, b, iterations, f_min, f_max, func):
         self.vector_size = vector_size
@@ -23,15 +30,17 @@ class BatAlgorithm:
     def optimize(self):
         for i in range(self.iterations):
             self.update_adaptation()
+            mean_pulse_rate = calculate_mean_pulse_rate(self.population)
             for j in range(len(self.population)):
-                #self.population[j].update_frequency()
                 self.population[j].update_velocity(self.best_bat)
                 self.population[j].update_position()
                 if random.uniform(0, 1) > self.population[j].pulse_rate:
-                    self.population[j].local_search(self.best_bat, self.calculate_mean_pulse_rate(self.population))
-                if (self.calculate_adaptation(self.population[j]) < self.best_adaptation) and (random.uniform(0, 1) < self.population[j].loudness):
-                    self.population[j].loudness = self.population[j].loudness * random.uniform(0,1)
-                    self.population[j].pulse_rate = self.population[j].pulse_rate * (1 - np.exp(-self.population[j].loudness * i))
+                    self.population[j].local_search(self.best_bat, mean_pulse_rate)
+                if (self.calculate_adaptation(self.population[j]) < self.best_adaptation) and (
+                        random.uniform(0, 1) < self.population[j].loudness):
+                    self.population[j].loudness = self.population[j].loudness * random.uniform(0, 1)
+                    self.population[j].pulse_rate = self.population[j].pulse_rate * (
+                                1 - np.exp(-self.population[j].loudness * i))
                 if self.calculate_adaptation(self.population[j]) < self.best_adaptation:
                     self.best_bat = copy.deepcopy(self.population[j])
                     self.best_adaptation = self.calculate_adaptation(self.population[j])
@@ -57,9 +66,3 @@ class BatAlgorithm:
             if adaptation < self.best_adaptation:  # global
                 self.best_adaptation = adaptation
                 self.best_bat = copy.deepcopy(bat)
-
-    def calculate_mean_pulse_rate(self, population):
-        pulse_rate = 0
-        for bat in population:
-            pulse_rate += bat.pulse_rate
-        return pulse_rate / len(population)

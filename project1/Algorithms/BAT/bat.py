@@ -1,8 +1,6 @@
 import copy
 import random
 
-import numpy as np
-
 
 class Bat:
     def __init__(self, vector_size, a, b, f_min, f_max):
@@ -19,9 +17,6 @@ class Bat:
         self.pulse_rate = random.uniform(0, 1)
         self.loudness = random.uniform(1, 2)
 
-    def update_frequency(self):
-        self.frequency = self.f_min + (self.f_max - self.f_min) * random.uniform(0, 1)
-
     def update_velocity(self, best_bat):
         for i in range(len(self.vector)):
             self.velocity[i] = self.velocity[i] + (self.vector[i] - best_bat.vector[i]) * self.frequency
@@ -32,8 +27,7 @@ class Bat:
             self.vector[i] = self.vector[i] + self.velocity[i]
             self.vector[i] = min(max(self.vector[i], self.a), self.b)
 
-    def local_search(self, best_bat, param):
+    def local_search(self, best_bat, mean_pulse_rate):
         for i in range(len(self.vector)):
-            self.vector[i] = best_bat.vector[i] + random.uniform(-1, 1) * param
+            self.vector[i] = best_bat.vector[i] + random.uniform(-1, 1) * mean_pulse_rate
             self.vector[i] = min(max(self.vector[i], self.a), self.b)
-
