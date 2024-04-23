@@ -25,5 +25,5 @@ git clone https://github.com/kwieciak/intelligent-data-analysis-techniques.git
 3. Configure Python interpreter
 4. Install Python packages
 ```sh
-pip install -r project1/requirements.txt
+pip install -r requirements.txt
 ```
