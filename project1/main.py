@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 from time import time
 
 from project1.Algorithms.BAT import bat_algorithm
+from project1.Algorithms.BOA import boa_algorithm
 from project1.Algorithms.DE import differential_evolution_algorithm
 import functions
 from project1.Algorithms.PSO import particle_swarm_optimization
@@ -74,13 +75,22 @@ if __name__ == '__main__':
     # time8_end = time()
     # time8 = time8_end - time8_start
 
+    # time_start = time()
+    # BAT = bat_algorithm.BatAlgorithm(50, 30, -100, 100, 1000, 0, 10, functions.sphere)
+    # best_adapt, best_solutions = BAT.optimize()
+    # time_end = time()
+    #
+    # print("BAT Value:", best_adapt, " Time: ", time_end - time_start)
+    # plt.plot(range(1, len(best_solutions) + 1), best_solutions, label='BAT', color='blue')
+    # plt.show()
+
     time_start = time()
-    BAT = bat_algorithm.BatAlgorithm(50, 20, -100, 100, 1000, 0, 10, functions.sphere)
-    best_adapt, best_solutions = BAT.optimize()
+    BOA = boa_algorithm.BoaAlgorithm(100, 20, -100, 100, 1000, functions.sphere)
+    best_adapt, best_solutions = BOA.optimize()
     time_end = time()
 
-    print("BAT Value:", best_adapt, " Time: ", time_end - time_start)
-    plt.plot(range(1, len(best_solutions) + 1), best_solutions, label='BAT', color='blue')
+    print("BOA Value:", best_adapt, " Time: ", time_end - time_start)
+    plt.plot(range(1, len(best_solutions) + 1), best_solutions, label='BOA', color='blue')
     plt.show()
     #print("DE Value:", best_solutions8[-1], " Time: ", time8)
 
