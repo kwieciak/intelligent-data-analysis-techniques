@@ -6,6 +6,8 @@ from project1.Algorithms.BOA import boa_algorithm
 from project1.Algorithms.DE import differential_evolution_algorithm
 import functions
 from project1.Algorithms.PSO import particle_swarm_optimization
+from project1.Algorithms.PSO_with_pattern import pso_pattern
+from project1.Algorithms.SMA import sma
 
 # f2_bounds = [-100, 100]
 # rastrigin_bounds = [-5.12, 5.12]
@@ -94,10 +96,10 @@ if __name__ == '__main__':
     # plt.show()
     #print("DE Value:", best_solutions8[-1], " Time: ", time8)
 
-    time_start1 = time()
-    BAT1 = bat_algorithm.BatAlgorithm(25, 30, -100, 100, 1000, 0, 10, functions.griewank_function)
-    best_adapt1, best_solutions1 = BAT1.optimize()
-    time_end1 = time()
+    # time_start1 = time()
+    # BAT1 = bat_algorithm.BatAlgorithm(25, 30, -100, 100, 1000, 0, 10, functions.griewank_function)
+    # best_adapt1, best_solutions1 = BAT1.optimize()
+    # time_end1 = time()
 
     # time_start2 = time()
     # BAT2 = bat_algorithm.BatAlgorithm(25, 30, -100, 100, 1000, 0, 10, functions.sphere)
@@ -112,15 +114,15 @@ if __name__ == '__main__':
     # print("frequency = [0,10]  f(x)=", best_adapt2, " Time: ", time_end2 - time_start2)
     # print("frequency = [0,20]  f(x)=", best_adapt3, " Time: ", time_end3 - time_start3)
 
-    time_start2 = time()
-    boa1 = boa_algorithm.BoaAlgorithm(75, 30, -100, 100, 1000, functions.griewank_function)
-    best_adapt2, best_solutions2 = boa1.optimize_with_levy_flight()
-    time_end2 = time()
-
-    time_start3 = time()
-    boa1 = boa_algorithm.BoaAlgorithm(75, 30, -100, 100, 1000, functions.griewank_function)
-    best_adapt3, best_solutions3 = boa1.optimize()
-    time_end3 = time()
+    # time_start2 = time()
+    # boa1 = boa_algorithm.BoaAlgorithm(75, 30, -100, 100, 1000, functions.griewank_function)
+    # best_adapt2, best_solutions2 = boa1.optimize_with_levy_flight()
+    # time_end2 = time()
+    #
+    # time_start3 = time()
+    # boa1 = boa_algorithm.BoaAlgorithm(75, 30, -100, 100, 1000, functions.griewank_function)
+    # best_adapt3, best_solutions3 = boa1.optimize()
+    # time_end3 = time()
 
     # time_start2 = time()
     # boa2 = boa_algorithm.BoaAlgorithm(75, 30, -100, 100, 1000, functions.sphere, c=0.1)
@@ -135,16 +137,52 @@ if __name__ == '__main__':
     # print("sensor modality = 0.1  f(x)=", best_adapt2, " Time: ", time_end2 - time_start2)
     # print("sensor modality = 1  f(x)=", best_adapt3, " Time: ", time_end3 - time_start3)
 
-    print("BAT Value:", best_adapt1, " Time: ", time_end1 - time_start1)
-    print("BOA Value with Levy Flight:", best_adapt2, " Time: ", time_end2 - time_start2)
-    print("BOA Value without Levy Flight:", best_adapt3, " Time: ", time_end3 - time_start3)
+    # print("BAT Value:", best_adapt1, " Time: ", time_end1 - time_start1)
+    # print("BOA Value with Levy Flight:", best_adapt2, " Time: ", time_end2 - time_start2)
+    # print("BOA Value without Levy Flight:", best_adapt3, " Time: ", time_end3 - time_start3)
+    #
+    # def plot(scores, scores2, scores3):
+    #     plt.figure(figsize=(10, 6))
+    #
+    #     plt.plot(range(1, len(scores) + 1), scores, label='BAT  ', color='green')
+    #     plt.plot(range(1, len(scores2) + 1), scores2, label='BOA with Levy Flight ', color='red')
+    #     plt.plot(range(1, len(scores3) + 1), scores3, label='BOA without Levy Flight ', color='blue')
+    #
+    #     plt.xlabel('Iteration')
+    #     plt.ylabel('GRIEWANK FUNCTION VALUE')
+    #     plt.yscale('log')
+    #     plt.legend()
+    #     plt.grid(True)
+    #     plt.show()
+    #
+    # plot(best_solutions1, best_solutions2, best_solutions3)
+    # # plot(best_solutions1, best_solutions2, best_solutions3)
+    # # plot(best_solutions4, best_solutions5, best_solutions6)
+    #plot(best_solutions7, best_solutions8)
 
-    def plot(scores, scores2, scores3):
+    time_start = time()
+    pso = pso_pattern.Pso(50, -100, 100, functions.griewank_function, 0.75, 0.5, 1, 20, 1000, cr=0.75, f=0.5, pm=0.1)
+    best_adapt, best_solutions = pso.optimize()
+    time_end = time()
+    print("PSO Value:", best_adapt, " Time: ", time_end - time_start)
+
+
+    time_start3 = time()
+    sma2 = sma.MultiSwarmSlimeMouldAlgorithm(3, 25, -100, 100, functions.griewank_function, 20, 1000)
+    best_adapt2, best_solutions2 = sma2.optimize()
+    time_end3 = time()
+    print("SMA Value:", best_adapt2, " Time: ", time_end3 - time_start3)
+
+
+
+
+    def plot(scores,scores2):
         plt.figure(figsize=(10, 6))
 
-        plt.plot(range(1, len(scores) + 1), scores, label='BAT  ', color='green')
-        plt.plot(range(1, len(scores2) + 1), scores2, label='BOA with Levy Flight ', color='red')
-        plt.plot(range(1, len(scores3) + 1), scores3, label='BOA without Levy Flight ', color='blue')
+        plt.plot(range(1, len(scores) + 1), scores, label='PSO with pattern   ', color='green')
+        plt.plot(range(1, len(scores2) + 1), scores2, label='MultiSwarmSMA  ', color='red')
+        #plt.plot(range(1, len(scores3) + 1), scores3, label='SMA swarms=10  ', color='blue')
+
 
         plt.xlabel('Iteration')
         plt.ylabel('GRIEWANK FUNCTION VALUE')
@@ -153,7 +191,14 @@ if __name__ == '__main__':
         plt.grid(True)
         plt.show()
 
-    plot(best_solutions1, best_solutions2, best_solutions3)
-    # # plot(best_solutions1, best_solutions2, best_solutions3)
-    # # plot(best_solutions4, best_solutions5, best_solutions6)
-    #plot(best_solutions7, best_solutions8)
+    plot(best_solutions, best_solutions2)
+
+    # for i, best_values in enumerate(best_solutions2):
+    #     plt.plot(best_values, label=f'Swarm {i + 1}')
+    #
+    # plt.xlabel('Iteration')
+    # plt.ylabel('Best Adaptation')
+    # plt.title('Best Values Over Time for Each Swarm')
+    # plt.yscale('log')
+    # plt.legend()
+    # plt.show()
